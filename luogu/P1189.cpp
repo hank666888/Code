@@ -1,82 +1,53 @@
-#include<iostream>
+#include <iostream>
+#include <cstring>
 using namespace std;
-char map[51][51];
-int dir[1010][3];
-int n,m;
-int p;
-bool cango[51][51];
-void dfs(int x,int y,int t)
-{
-    if(t==p)
-    {
-        cango[x][y]=true;
-        if(x+dir[p][1]>0&&x+dir[p][1]<=n&&y+dir[p][2]>0&&y+dir[p][2]<=n&&map[x+dir[p][1]][y+dir[p][2]]!='X')
-            dfs(x+dir[p][1],y+dir[p][2],t);
-        return ;
-    }
-    else
-    {
-        if(x+dir[t+1][1]>0&&x+dir[t+1][1]<=n&&y+dir[t+1][2]>0&&y+dir[t+1][2]<=n&&map[x+dir[t+1][1]][y+dir[t+1][2]]!='X')
-                dfs(x+dir[t+1][1],y+dir[t+1][2],t+1);
-        if(x+dir[t][1]>0&&x+dir[t][1]<=n&&y+dir[t][2]>0&&y+dir[t][2]<=n&&map[x+dir[t][1]][y+dir[t][2]]!='X')
-                dfs(x+dir[t][1],y+dir[t][2],t);
-    }
+
+const int dir[5][2] = {{0, 0}, {-1, 0}, {0, 1}, {1, 0}, {0, -1}};
+
+int n, m, k;
+char map[110][110];
+bool ans[110][110], vis[110][110];
+
+void search(int num) {
+	memset(vis, false, sizeof(vis));
+	for (int i=1; i<=n; i++) 
+		for (int j=1; j<=m; j++) 
+			if (ans[i][j] && !vis[i][j]) {
+				int nx = i + dir[num][0], ny = j + dir[num][1];
+				ans[i][j] = false;
+				while (map[nx][ny] == '.' || map[nx][ny] == '*') {
+					ans[nx][ny] = true;
+					vis[nx][ny] = true;
+					nx = nx + dir[num][0], ny = ny + dir[num][1];
+				}
+			}
 }
-int main()
-{
-    int fx,fy;
-    cin>>n>>m;
-    for(int i=1;i<=n;i++)
-    {
-        for(int j=1;j<=m;j++)
-        {
-            cin>>map[i][j];
-            if(map[i][j]=='*')
-            {
-                fx=i;
-                fy=j;
-            }
-        }
-    }
-    cin>>p;
-    for(int i=1;i<=p;i++)
-    {
-        string str;
-        cin>>str;
-        if(str=="NORTH")
-        {
-            dir[i][1]=-1;
-            dir[i][2]=0;
-        }
-        else if(str=="SOUTH")
-        {
-            dir[i][1]=1;
-            dir[i][2]=0;
-        }
-        else if(str=="WEST")
-        {
-            dir[i][1]=0;
-            dir[i][2]=-1;
-        }
-        else
-        {
-            dir[i][1]=0;
-            dir[i][2]=1;
-        }
-    }
-    dfs(fx,fy,1);
-    for(int i=1;i<=n;i++)
-    {
-        for(int j=1;j<=m;j++)
-        {
-            if(cango[i][j])
-                cout<<"*";
-            else if(map[i][j]=='X')
-                cout<<map[i][j];
-            else
-                cout<<".";
-        }
-        cout<<endl;
-    }
-    return 0;
+
+int main() {
+	ios::sync_with_stdio(false);
+	cin >> n >> m;
+	for (int i=1; i<=n; i++)
+		for (int j=1; j<=m; j++) {
+			cin >> map[i][j];
+			if (map[i][j] == '*') ans[i][j] = true;
+		}
+	cin >> k;
+	while (k--) {
+		string str;
+		cin >> str;
+		if (str == "NORTH") search(1);
+		if (str == "EAST") search(2);
+		if (str == "SOUTH") search(3);
+		if (str == "WEST") search(4);
+	}
+	for (int i=1; i<=n; i++) {
+		for (int j=1; j<=m; j++) {
+			if (ans[i][j]) cout << "*";
+			else if (map[i][j] == '*')
+				cout << ".";
+			else cout << map[i][j];
+		}
+		cout << endl;
+	}
+	return 0;
 }

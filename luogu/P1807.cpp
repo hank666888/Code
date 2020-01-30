@@ -1,42 +1,59 @@
 #include <iostream>
+#include <cstdio>
+#include <vector>
+#include <queue>
+#define _for(i, a, b) for (int i=(a); i<=(b); i++)
+#define _rep(i, a, b) for (int i=(a); i<(b); i++)
 using namespace std;
 
-long long G[1510][1510],n,m,d[1510];
+const int MAXN = 1010;
 
-bool used[1510];
+int G[MAXN][MAXN];
 
-long long max(long long a,long long b){
-    if(a>b)
-        return a;
-    return b;
+void addedge(int u, int v, int c) {
+	G[u][v] = max(G[u][v], c);
 }
 
-void dijkstra(){
-    fill(d,d+1+n,0);
-    fill(used,used+1+n,false);
-    d[1]=0;
-    while(true){
-        int v=-1;
-        for(int u=1;u<=n;u++)
-            if(!used[u]&&(v==-1||d[u]>d[v]))
-                v=u;
-        if(v==-1)
-            break;
-        used[v]=true;
-        for(int u=1;u<=n;u++)
-            if(d[u]<d[v]+G[v][u])
-                d[u]=d[v]+G[v][u];
-    }
+int n, m, d[MAXN];
+bool exist[MAXN];
+queue<int> q;
+
+void init() {
+	for (int i=1; i<=n; i++)
+		for (int j=1; j<=n; j++)
+			G[i][j] = -1;
 }
 
-int main(){
-    cin>>n>>m;
-    for(int i=1;i<=m;i++){
-        int u,v,c;
-        cin>>u>>v>>c;
-        G[u][v]=c;
-    }
-    dijkstra();
-    cout<<d[n]<<endl;
-    return 0;
+void spfa(int s) {
+	fill(d+1, d+1+n, -1);
+	d[s] = 0;
+	exist[s] = true;
+	q.push(s);
+	while (!q.empty()) {
+		int v = q.front();
+		q.pop();
+		exist[v] = false;
+		_for (i, 1, n) {
+			if (G[v][i] != -1 && d[i] < d[v]+G[v][i]) {
+				d[i] = d[v]+G[v][i];
+				if (!exist[i]) {
+					exist[i] = true;
+					q.push(i);
+				}
+			}
+		}
+	}
+}
+
+int main() {
+	cin >> n >> m;
+	init();
+	_for (i, 1, m) {
+		int u, v, c;
+		cin >> u >> v >> c;
+		addedge(u, v, c);
+	}
+	spfa(1);
+	cout << d[n] << endl;
+	return 0;
 }
