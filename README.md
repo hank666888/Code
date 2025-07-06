@@ -3,7 +3,7 @@
 
 This is zhangyuhan's code files. Welcome to see it.
 
-**But don't submmit my codes on some oj**
+**But don't submit my codes on some oj**
 
 这是我的代码。欢迎观看。
 
